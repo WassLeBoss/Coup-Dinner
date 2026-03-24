@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour nos 2 ans ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffe6e6; /* Rose pâle mignon */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden; /* Empêche de scroller quand le bouton s'enfuit */
+        }
+
+        h1 {
+            color: #d63031;
+            font-size: 2rem;
+            margin: 20px;
+        }
+
+        p {
+            color: #2d3436;
+            font-size: 1.2rem;
+        }
+
+        img {
+            max-width: 250px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        button {
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #btn-oui {
+            background-color: #ff7675;
+            color: white;
+            position: absolute;
+            left: 30%;
+            transform: translateX(-50%);
+        }
+
+        #btn-non {
+            background-color: #b2bec3;
+            color: white;
+            position: absolute;
+            left: 70%;
+            transform: translateX(-50%);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Pour mobile */
+        @media (max-width: 600px) {
+            #btn-oui { left: 25%; }
+            #btn-non { left: 75%; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ÉTAPE 1 : L'ACCUEIL -->
+    <div id="etape1">
+        <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="Cute GIF">
+        <h1>Joyeux 2 ans mon amour ! ❤️</h1>
+        <p>J'ai une petite question très importante à te poser...</p>
+        <button id="btn-commencer" style="background-color: #ff7675; color: white;">Voir la question</button>
+    </div>
+
+    <!-- ÉTAPE 2 : LA QUESTION (Le jeu) -->
+    <div id="etape2" class="hidden">
+        <img src="https://media.giphy.com/media/l4pTfx2qLszoacZRS/giphy.gif" alt="Please GIF">
+        <h1>Acceptes-tu de venir au "Coupain Dinner" avec moi ? 🍽️🍷</h1>
+        <div class="btn-container">
+            <button id="btn-oui">OUI ! 😍</button>
+            <button id="btn-non">Non 😒</button>
+        </div>
+    </div>
+
+    <!-- ÉTAPE 3 : LA RÉUSSITE -->
+    <div id="etape3" class="hidden">
+        <img src="https://media.giphy.com/media/11sBLVxIR71zCG/giphy.gif" alt="Yay GIF">
+        <h1>Youpiiiii ! 🎉❤️</h1>
+        <p>C'était sûr que tu allais dire oui ! (De toute façon tu n'avais pas le choix ahah).</p>
+        <p>Prépare-toi bien, je t'aime ! ❤️</p>
+    </div>
+
+    <script>
+        const etape1 = document.getElementById('etape1');
+        const etape2 = document.getElementById('etape2');
+        const etape3 = document.getElementById('etape3');
+        
+        const btnCommencer = document.getElementById('btn-commencer');
+        const btnOui = document.getElementById('btn-oui');
+        const btnNon = document.getElementById('btn-non');
+
+        // Passer à la question
+        btnCommencer.addEventListener('click', () => {
+            etape1.classList.add('hidden');
+            etape2.classList.remove('hidden');
+        });
+
+        // Quand elle clique sur OUI
+        btnOui.addEventListener('click', () => {
+            etape2.classList.add('hidden');
+            etape3.classList.remove('hidden');
+        });
+
+        // LA MAGIE : Le bouton NON s'enfuit
+        function fuiteBouton() {
+            // Calcule une position aléatoire sur l'écran
+            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - 40);
+            
+            // Applique la nouvelle position en fixe
+            btnNon.style.position = 'fixed';
+            btnNon.style.left = `${x}px`;
+            btnNon.style.top = `${y}px`;
+        }
+
+        // Se déclenche si elle passe la souris dessus (PC) ou si elle essaie de toucher (Téléphone)
+        btnNon.addEventListener('mouseover', fuiteBouton);
+        btnNon.addEventListener('touchstart', fuiteBouton);
+        btnNon.addEventListener('click', fuiteBouton); // Au cas où elle serait ultra rapide
+    </script>
+
+</body>
+</html>
