@@ -9,39 +9,47 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffe6e6; /* Rose pâle mignon */
+            background-color: #ffe6e6;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             text-align: center;
-            overflow: hidden; /* Empêche de scroller quand le bouton s'enfuit */
+            overflow: hidden;
         }
 
         h1 {
             color: #d63031;
             font-size: 2rem;
             margin: 20px;
+            padding: 0 20px;
         }
 
         p {
             color: #2d3436;
             font-size: 1.2rem;
+            padding: 0 20px;
         }
 
         img {
             max-width: 250px;
+            height: 250px;
+            object-fit: cover;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
 
         .btn-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
             margin-top: 20px;
+            flex-wrap: wrap; /* Permet aux boutons de s'adapter si le Oui devient géant */
         }
 
         button {
@@ -52,7 +60,7 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
+            transition: all 0.3s ease; /* Animation fluide quand le bouton grossit */
         }
 
         button:active {
@@ -62,28 +70,16 @@
         #btn-oui {
             background-color: #ff7675;
             color: white;
-            position: absolute;
-            left: 30%;
-            transform: translateX(-50%);
+            z-index: 10;
         }
 
         #btn-non {
             background-color: #b2bec3;
             color: white;
-            position: absolute;
-            left: 70%;
-            transform: translateX(-50%);
         }
 
         .hidden {
             display: none !important;
-        }
-
-        /* Pour mobile */
-        @media (max-width: 600px) {
-            #btn-oui { left: 25%; }
-            #btn-non { left: 75%; }
-            h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -91,7 +87,7 @@
 
     <!-- ÉTAPE 1 : L'ACCUEIL -->
     <div id="etape1">
-        <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="Cute GIF">
+        <img src="https://media.giphy.com/media/xT0xeF0s88zXGEA90Q/giphy.gif" alt="Cute Hello GIF">
         <h1>Joyeux 2 ans mon amour ! ❤️</h1>
         <p>J'ai une petite question très importante à te poser...</p>
         <button id="btn-commencer" style="background-color: #ff7675; color: white;">Voir la question</button>
@@ -99,7 +95,7 @@
 
     <!-- ÉTAPE 2 : LA QUESTION (Le jeu) -->
     <div id="etape2" class="hidden">
-        <img src="https://media.giphy.com/media/l4pTfx2qLszoacZRS/giphy.gif" alt="Please GIF">
+        <img id="image-question" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="Please GIF">
         <h1>Acceptes-tu de venir au "Coupain Dinner" avec moi ? 🍽️🍷</h1>
         <div class="btn-container">
             <button id="btn-oui">OUI ! 😍</button>
@@ -111,7 +107,7 @@
     <div id="etape3" class="hidden">
         <img src="https://media.giphy.com/media/11sBLVxIR71zCG/giphy.gif" alt="Yay GIF">
         <h1>Youpiiiii ! 🎉❤️</h1>
-        <p>C'était sûr que tu allais dire oui ! (De toute façon tu n'avais pas le choix ahah).</p>
+        <p>C'était sûr que tu allais dire oui !</p>
         <p>Prépare-toi bien, je t'aime ! ❤️</p>
     </div>
 
@@ -123,6 +119,23 @@
         const btnCommencer = document.getElementById('btn-commencer');
         const btnOui = document.getElementById('btn-oui');
         const btnNon = document.getElementById('btn-non');
+        const imageQuestion = document.getElementById('image-question');
+
+        // Les phrases qui vont s'afficher quand elle clique sur Non
+        const phrasesNon = [
+            "T'es sûre ? 🤨",
+            "Vraiment sûre ?? 🥺",
+            "Pense au bon repas... 🤤",
+            "Tu vas briser mon cœur 💔",
+            "Je vais pleurer... 😭",
+            "Coupain sera tout seul 😿",
+            "Allez dis oui stp 🙏",
+            "D'accord, t'as gagné... 😔",
+            "JE RIGOLE, OUI ! ❤️" // La dernière étape
+        ];
+
+        let indexNon = 0;
+        let tailleBoutonOui = 1.2; // Taille initiale de la police en rem
 
         // Passer à la question
         btnCommencer.addEventListener('click', () => {
@@ -130,28 +143,44 @@
             etape2.classList.remove('hidden');
         });
 
-        // Quand elle clique sur OUI
-        btnOui.addEventListener('click', () => {
+        // Quand elle clique sur OUI (Succès)
+        btnOui.addEventListener('click', function declencherOui() {
             etape2.classList.add('hidden');
             etape3.classList.remove('hidden');
         });
 
-        // LA MAGIE : Le bouton NON s'enfuit
-        function fuiteBouton() {
-            // Calcule une position aléatoire sur l'écran
-            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - 40);
-            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - 40);
-            
-            // Applique la nouvelle position en fixe
-            btnNon.style.position = 'fixed';
-            btnNon.style.left = `${x}px`;
-            btnNon.style.top = `${y}px`;
-        }
+        // Quand elle clique sur NON (La mécanique du jeu)
+        btnNon.addEventListener('click', () => {
+            if (indexNon < phrasesNon.length - 1) {
+                // Changer le texte du bouton Non
+                btnNon.innerText = phrasesNon[indexNon];
+                indexNon++;
 
-        // Se déclenche si elle passe la souris dessus (PC) ou si elle essaie de toucher (Téléphone)
-        btnNon.addEventListener('mouseover', fuiteBouton);
-        btnNon.addEventListener('touchstart', fuiteBouton);
-        btnNon.addEventListener('click', fuiteBouton); // Au cas où elle serait ultra rapide
+                // Faire grossir le bouton Oui !
+                tailleBoutonOui += 0.8; // Augmente la taille à chaque clic
+                btnOui.style.fontSize = `${tailleBoutonOui}rem`;
+                btnOui.style.padding = `${tailleBoutonOui * 10}px ${tailleBoutonOui * 20}px`;
+
+                // Rendre le GIF de plus en plus triste au bout du 3ème clic
+                if (indexNon === 3) {
+                    imageQuestion.src = "https://media.giphy.com/media/3o6wrvdHFbwBrUFenu/giphy.gif"; // Crying face
+                }
+                // Encore plus triste au 5ème clic
+                if (indexNon === 5) {
+                    imageQuestion.src = "https://media.giphy.com/media/qQdL532nCG9wY/giphy.gif"; // Sad cat
+                }
+            } else {
+                // À la toute fin, le bouton "Non" se transforme en bouton "Oui"
+                btnNon.innerText = phrasesNon[phrasesNon.length - 1];
+                btnNon.style.backgroundColor = "#ff7675"; // Devient rouge comme le Oui
+                
+                // Si elle clique dessus maintenant, ça fait comme si elle avait cliqué sur Oui
+                btnNon.addEventListener('click', () => {
+                    etape2.classList.add('hidden');
+                    etape3.classList.remove('hidden');
+                });
+            }
+        });
     </script>
 
 </body>
